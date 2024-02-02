@@ -2,15 +2,16 @@
 #include <queue>
 using namespace std;
 
+
 template< class Tdata >
 class TreeNode{
 public:
-    Tdata data;
+    Tdata subject;
     TreeNode<Tdata> *right;
     TreeNode<Tdata> *left;
 
     TreeNode(Tdata _data){
-        this->data = _data;
+        this->subject = _data;
         this->left = nullptr;
         this->right = nullptr;
     }
@@ -18,14 +19,12 @@ public:
 
 template < class Tdata >
 class BST{
-
 private:
-    internalHeight(TreeNode<Tdata> *node){
+    int internalHeight(TreeNode<Tdata> *node){
         if (node == nullptr)
             return 0;
         else {
             return 1 + max(internalHeight(node -> left), internalHeight(node -> right));
-
         }
     }
 
@@ -33,22 +32,17 @@ private:
         if(node == nullptr){
             return;
         }
-        cout << node -> data << " --> " ;
-
+        cout << node -> subject << " --> " ;
         internalPreOrder(node -> left);
         internalPreOrder(node -> right);
-
     }
 
     void internalInOrder (TreeNode<Tdata> *node) {
-
         if (node == nullptr) {
             return;
         }
-
         internalInOrder(node->left);
-        cout << node->data << " --> ";
-
+        cout << node->subject << " --> ";
         internalInOrder(node->right);
     }
 
@@ -58,21 +52,8 @@ private:
         }
         internalPostOrder(node -> left);
         internalPostOrder(node -> right);
-        cout << node -> data << " --> " ;
+        cout << node -> subject << " --> " ;
     }
-
-    void internalPrint(TreeNode<Tdata> *node){
-        if(node == nullptr){
-            return;
-        }
-        internalPrint(node -> left);
-        cout << node -> data << " --> " ;
-        internalPrint(node -> right);
-    }
-
-
-
-
 
 public:
     TreeNode<Tdata> *root;
@@ -80,173 +61,57 @@ public:
     BST(){this->root = nullptr;}
     ~BST(){delete root;}
 
-    void iterative_insert(Tdata _data){
-        /*without queue*/
+    TreeNode<Tdata>* insert_subject (Tdata _subject){
+        TreeNode<Tdata> *newNode = new TreeNode<Tdata>(_subject);
 
-        TreeNode<Tdata> *newNode = new TreeNode<Tdata>(_data);
         if (this->root == nullptr){
-            this -> root = newNode;
-            return;
+            this->root = newNode;
+            return newNode;
         }
 
-        TreeNode<Tdata> *currentNode = this -> root;
+        TreeNode<Tdata> *currentNode = this->root;
 
         while(currentNode != nullptr){
-
-            if(newNode->data < currentNode -> data){
-                if(currentNode->left == nullptr){
-                    currentNode -> left = newNode;
+            if (newNode->subject < currentNode->subject){
+                if (currentNode->left == nullptr){
+                    currentNode->left = newNode;
                     break;
                 }
-                else {
-                    currentNode = currentNode -> left;
-
+                else{
+                    currentNode = currentNode->left;
                 }
             }
-            else{
-                if (currentNode -> right == nullptr) {
+            else if (newNode->subject > currentNode->subject){
+                if (currentNode->right == nullptr){
                     currentNode->right = newNode;
                     break;
                 }
                 else{
-                    currentNode = currentNode -> right;
+                    currentNode = currentNode->right;
                 }
             }
-        }
-
-
-
-
-    }
-
-    void queue_insert (Tdata data) {
-        /*insert with the help of queue*/
-
-        TreeNode<Tdata> *newNode = new TreeNode<Tdata>(data);
-
-        if (this->root == nullptr) {
-            this->root = newNode;
-            return;
-        }
-
-        queue<TreeNode<Tdata> *> queue;
-        queue.push(this->root);
-        while (!queue.empty()) {
-            TreeNode<Tdata> *currentNode = queue.front();
-            queue.pop();
-            if (currentNode->Left == nullptr) {
-                currentNode->Left = newNode;
+            else{
                 break;
-            } else {
-                queue.push(currentNode->Left);
-            }
-
-            if (currentNode->Right == nullptr) {
-                currentNode->Right = newNode;
-                break;
-            } else {
-                queue.push(currentNode->Right);
             }
         }
+        return newNode;
     }
 
-    TreeNode<Tdata> find(Tdata _data){
-
+    TreeNode<Tdata> *find(Tdata _data){
         TreeNode <Tdata> *currentNode = this ->root;
 
         while(currentNode != nullptr){
-            if (_data == currentNode -> data){
+            if (_data == currentNode -> subject){
                 return currentNode;
             }
-            else if (_data < currentNode -> data){
+            else if (_data < currentNode -> subject){
                 currentNode = currentNode -> left;
-
             }
-            else if(_data > currentNode -> data){
+            else if(_data > currentNode -> subject){
                 currentNode = currentNode -> right;
             }
-
-
         }
         return nullptr;
-    }
-
-    /**
-        * @brief This function is used to find the parent of a node
-        * @param _data
-        * @return
-        */
-    void delete_leaf(Tdata _data) {
-
-        TreeNode<Tdata> * currentNode = this->root;
-        TreeNode<Tdata> * parent = nullptr;
-
-
-        while (currentNode != nullptr) {
-            if (_data == currentNode->data && (currentNode->left == nullptr && currentNode->right == nullptr)) {
-                    if (parent -> right -> data != currentNode -> data){
-                        //delete currentNode;
-                        parent -> left = nullptr;
-                        break;
-
-                }
-                    else{
-                        //delete currentNode;
-                        parent -> right = nullptr;
-                        break;
-                    }
-            }
-
-            if(currentNode -> data < _data){
-                parent = currentNode;
-                currentNode = currentNode -> right;
-            }
-            else if (_data > currentNode -> data){
-                parent = currentNode;
-                currentNode = currentNode -> right;
-            }
-
-        }
-    }
-
-
-
-
-    void delete_one_child(Tdata _data) {
-        TreeNode<Tdata> * currentNode = this->root;
-        TreeNode<Tdata> * parent = nullptr;
-
-        if (_data == this->root->data) {
-            if (this->root->left != nullptr) {
-                this->root = this->root->left;
-            } else {
-                this->root = this->root->right;
-            }
-            delete currentNode;
-            return;
-        }
-
-        while (currentNode != nullptr) {
-            if ((currentNode->left == nullptr) ^ (currentNode->right == nullptr) && currentNode->data == _data) {}
-        }
-    }
-
-
-    void delete_two_childs(Tdata _data){
-        TreeNode<Tdata> *currentNode = this -> root;
-        TreeNode<Tdata> *parent =nullptr ;
-        TreeNode<Tdata> *minRight =nullptr ;
-
-
-
-        while(currentNode != nullptr){
-            if ((currentNode -> left != nullptr && currentNode -> right != nullptr) && currentNode -> data == _data){
-
-                
-
-                }
-            }
-
     }
 
     int height(){
@@ -265,22 +130,141 @@ public:
         internalPostOrder(this->root);
     }
 
-    void Print(){
-        internalPrint(this->root);
+    bool isExist(Tdata _data){
+        TreeNode<Tdata> *currentNode = this->root;
+        while (currentNode != nullptr) {
+            if (currentNode->subject == _data) {
+                return true;
+            } else if (currentNode->subject > _data) {
+                currentNode = currentNode->left;
+            } else {
+                currentNode = currentNode->right;
+            }
+        }
+        return false;
     }
 
-    void delete_data(Tdata _data){
-       //delete_two_childs(_data);
-       //delete_one_child(_data);
-        delete_leaf(_data);
+    void Remove(Tdata _subject){
+        TreeNode<Tdata> *currentNode = this->root;
+        TreeNode<Tdata> *parent = nullptr;
+        bool isLeft = false;
 
+        while (currentNode != nullptr) {
+            if (currentNode->subject == _subject) {
+                break;
+            } else if (currentNode->subject > _subject) {
+                parent = currentNode;
+                currentNode = currentNode->left;
+                isLeft = true;
+            } else {
+                parent = currentNode;
+                currentNode = currentNode->right;
+                isLeft = false;
+            }
+        }
+
+        if (currentNode == nullptr) {
+            cout << "Not Found" << endl;
+            return;
+        }
+
+        if (currentNode->left == nullptr && currentNode->right == nullptr) {
+            if (parent == nullptr) {
+                this->root = nullptr;
+            } else {
+                if (isLeft) {
+                    parent->left = nullptr;
+                } else {
+                    parent->right = nullptr;
+                }
+            }
+        } else if (currentNode->left != nullptr && currentNode->right != nullptr) {
+            TreeNode<Tdata> *minRight = currentNode->right;
+            TreeNode<Tdata> *parentMinRight = currentNode;
+            while (minRight->left != nullptr) {
+                parentMinRight = minRight;
+                minRight = minRight->left;
+            }
+            currentNode->subject = minRight->subject;
+            if (parentMinRight == currentNode) {
+                currentNode->right = minRight->right;
+            } else {
+                parentMinRight->left = minRight->right;
+            }
+        } else {
+            TreeNode<Tdata> *child = nullptr;
+            if (currentNode->left != nullptr) {
+                child = currentNode->left;
+            } else {
+                child = currentNode->right;
+            }
+            if (parent == nullptr) {
+                this->root = child;
+            } else {
+                if (isLeft) {
+                    parent->left = child;
+                } else {
+                    parent->right = child;
+                }
+            }
+        }
     }
 
+    int height(TreeNode<Tdata>* node) {
+        if (node == nullptr) return 0;
+        else {
+            return 1 + max(height(node->left), height(node->right));
+        }
+    }
 
+    int getBalanceFactor(TreeNode<Tdata>* node) {
+        if (node == nullptr) return 0;
+        else {
+            return height(node->left) - height(node->right);
+        }
+    }
 
+    TreeNode<Tdata>* rightRotate(TreeNode<Tdata>* x) {
+        TreeNode<Tdata>* y = x->left;
+        TreeNode<Tdata>* T2 = y->right;
 
+        y->right = x;
+        x->left = T2;
+        return y;
+    }
+
+    TreeNode<Tdata>* leftRotate(TreeNode<Tdata>* x) {
+        TreeNode<Tdata> *y = x->right;
+        TreeNode<Tdata> *T2 = y->left;
+
+        y->left = x;
+        x->right = T2;
+        return y;
+    }
+
+    TreeNode<Tdata>* balanceBst(TreeNode<Tdata>* node) {
+        if (node == nullptr) return nullptr;
+        node->left = balanceBst(node->left);
+        node->right = balanceBst(node->right);
+        int balanceFactor = getBalanceFactor(node);
+        if (balanceFactor > 1) {
+            if (getBalanceFactor(node->left) >= 0) {
+                node = rightRotate(node);
+            } else {
+                node->left = leftRotate(node->left);
+                node = rightRotate(node);
+            }
+        } else if (balanceFactor < -1) {
+            if (getBalanceFactor(node->right) <= 0) {
+                node = leftRotate(node);
+            } else {
+                node->right = rightRotate(node->right);
+                node = leftRotate(node);
+            }
+        }
+        return node;
+    }
 };
-
 
 
 
