@@ -9,7 +9,7 @@ This repository serves as a learning resource for understanding fundamental data
 1. Stack
 2. Queue
 3. Linked List
-4. Binary Search Tree
+4. Binary Search Tree & Binary Tree
 
 ## How to Use
 To use any of the data structures provided in this repository, follow these steps:
